@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "find-tutors"
+version = "0.1.0"
+description = "Flask application to find English tutors."
+authors = ["alpden550 <alpden550@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+flask = "^1.1.1"
+python-dotenv = "^0.10.5"
+
+[tool.poetry.dev-dependencies]
+wemake-python-styleguide = "^0.13.4"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
