@@ -9,7 +9,7 @@ TUTORS_JSON = 'tutors.json'
 NOT_FOUND_CODE = 404
 
 
-def fetch_json(json_file='booking.json'):
+def fetch_json(json_file):
     try:
         return json.loads(Path(json_file).read_text())
     except FileNotFoundError:
@@ -45,9 +45,39 @@ def send_request():
     return render_template('request.html')
 
 
-@app.route('/request_done/')
-def sended_request():
-    return 'request_done'
+@app.route('/request_done/', methods=['POST'])
+def sended_request(output_json='request.json'):
+    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
+    client_goal = all_goals.get(request.form.get('goal'))
+    client_time = request.form.get('time')
+    client_name = request.form.get('client_name')
+    clinet_phone = request.form.get('client_phone')
+
+    all_requests = []
+    all_requests.extend(fetch_json(json_file='request.json'))
+    all_requests.append({
+        'client_name': client_name,
+        'client_goal': client_goal,
+        'client_time': client_time,
+        'client_phone': clinet_phone,
+    })
+    with open(output_json, 'w+') as json_handler:
+        json.dump(
+            all_requests,
+            json_handler,
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=4,
+            separators=(',', ': '),
+        )
+
+    return render_template(
+        'request_done.html',
+        goal=client_goal,
+        time=client_time,
+        name=client_name,
+        phone=clinet_phone,
+    )
 
 
 @app.route('/booking/<int:tutor_id>/')
@@ -82,7 +112,7 @@ def booking_done(output_file='booking.json'):
     tutor_id = request.form.get('tutor_id')
 
     bookings = []
-    bookings.extend(fetch_json())
+    bookings.extend(fetch_json(json_file='booking.json'))
     bookings.append(
         {
             'tutor_id': tutor_id,
