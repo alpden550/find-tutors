@@ -8,6 +8,7 @@ authors = ["alpden550 <alpden550@gmail.com>"]
 python = "^3.7"
 flask = "^1.1.1"
 python-dotenv = "^0.10.5"
+gunicorn = "^20.0.4"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.13.4"
