@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from random import sample
 
 from flask import Flask, abort, render_template, request
 
@@ -18,7 +19,15 @@ def fetch_json(json_file):
 
 @app.route('/')
 def index():
-    return 'Hello World!'
+    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
+    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    random_tutors = sample(all_tutors, 6)
+
+    return render_template(
+        'index.html',
+        goals=all_goals,
+        tutors=random_tutors,
+    )
 
 
 @app.route('/goals/<goal>/')
@@ -106,7 +115,7 @@ def book_tutor(tutor_id, day=None, time=None):
     except StopIteration:
         abort(NOT_FOUND_CODE, description='Resource not found')
     return render_template(
-        'booking.html', tutor=tutor, day=schedule_day, time=schedule_time
+        'booking.html', tutor=tutor, day=schedule_day, time=schedule_time,
     )
 
 
