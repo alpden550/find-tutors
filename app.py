@@ -1,36 +1,12 @@
-import json
-from pathlib import Path
 from random import sample
 
 from flask import Flask, abort, render_template, request
 
+from utilits import fetch_data_from_json, fetch_json, write_json
+
 app = Flask(__name__)
 
-TUTORS_JSON = 'tutors.json'
 NOT_FOUND_CODE = 404
-
-
-def fetch_json(json_file):
-    try:
-        return json.loads(Path(json_file).read_text())
-    except FileNotFoundError:
-        return []
-
-
-def write_json(json_data, output):
-    with open(output, 'w+') as json_handler:
-        json.dump(
-            json_data,
-            json_handler,
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': '),
-        )
-
-
-def fetch_data_from_json(fetched, json_file=TUTORS_JSON):
-    return json.loads(Path(json_file).read_text()).get(fetched)
 
 
 @app.route('/')
