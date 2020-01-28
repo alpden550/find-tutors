@@ -9,6 +9,13 @@ TUTORS_JSON = 'tutors.json'
 NOT_FOUND_CODE = 404
 
 
+def fetch_json(json_file='booking.json'):
+    try:
+        return json.loads(Path(json_file).read_text())
+    except FileNotFoundError:
+        return []
+
+
 @app.route('/')
 def index():
     return 'Hello World!'
@@ -74,21 +81,28 @@ def booking_done(output_file='booking.json'):
     client_time = request.form.get('client_time')
     tutor_id = request.form.get('tutor_id')
 
-    Path(output_file).write_text(
-        json.dumps(
-            {
-                'tutor_id': tutor_id,
-                'client_name': client_name,
-                'client_phone': client_phone,
-                'client_day': client_day,
-                'client_time': client_time,
-            },
+    bookings = []
+    bookings.extend(fetch_json())
+    bookings.append(
+        {
+            'tutor_id': tutor_id,
+            'client_name': client_name,
+            'client_phone': client_phone,
+            'client_day': client_day,
+            'client_time': client_time,
+        },
+    )
+
+    with open(output_file, 'w+') as json_handler:
+        json.dump(
+            bookings,
+            json_handler,
             ensure_ascii=False,
             sort_keys=True,
             indent=4,
             separators=(',', ': '),
-        ),
-    )
+        )
+
     return render_template(
         'booking_done.html',
         name=client_name,
