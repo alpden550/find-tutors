@@ -17,6 +17,18 @@ def fetch_json(json_file):
         return []
 
 
+def write_json(json_data, output):
+    with open(output, 'w+') as json_handler:
+        json.dump(
+            json_data,
+            json_handler,
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=4,
+            separators=(',', ': '),
+        )
+
+
 @app.route('/')
 def index():
     all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
@@ -77,15 +89,7 @@ def sended_request(output_json='request.json'):
         'client_time': client_time,
         'client_phone': clinet_phone,
     })
-    with open(output_json, 'w+') as json_handler:
-        json.dump(
-            all_requests,
-            json_handler,
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': '),
-        )
+    write_json(all_requests, output_json)
 
     return render_template(
         'request_done.html',
@@ -138,16 +142,7 @@ def booking_done(output_file='booking.json'):
             'client_time': client_time,
         },
     )
-
-    with open(output_file, 'w+') as json_handler:
-        json.dump(
-            bookings,
-            json_handler,
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': '),
-        )
+    write_json(bookings, output_file)
 
     return render_template(
         'booking_done.html',
