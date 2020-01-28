@@ -23,7 +23,14 @@ def index():
 
 @app.route('/goals/<goal>/')
 def goals(goal):
-    return goal
+    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
+    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    client_goal = all_goals.get(goal)
+    if not client_goal:
+        abort(NOT_FOUND_CODE, 'Goal not found')
+
+    filtered_tutors = (tutor for tutor in all_tutors if goal in tutor['goals'])
+    return render_template('goal.html', goal=client_goal, tutors=filtered_tutors)
 
 
 @app.route('/profiles/<int:tutor_id>/')
