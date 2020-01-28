@@ -75,7 +75,7 @@ def booking_done(output_file='booking.json'):
     tutor_id = request.form.get('tutor_id')
 
     Path(output_file).write_text(
-        json.dump(
+        json.dumps(
             {
                 'tutor_id': tutor_id,
                 'client_name': client_name,
