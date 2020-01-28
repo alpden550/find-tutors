@@ -66,7 +66,18 @@ def book_tutor(tutor_id, day=None, time=None):
 
 @app.route('/booking_done/', methods=['POST'])
 def booking_done():
-    return 'booking_done'
+    client_name = request.form.get('client_name')
+    client_phone = request.form.get('client_phone')
+    client_day = request.form.get('client_day')
+    client_time = request.form.get('client_time')
+
+    return render_template(
+        'booking_done.html',
+        name=client_name,
+        phone=client_phone,
+        day=client_day,
+        time=client_time,
+    )
 
 
 if __name__ == '__main__':
