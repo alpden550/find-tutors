@@ -29,10 +29,14 @@ def write_json(json_data, output):
         )
 
 
+def fetch_data_from_json(fetched, json_file=TUTORS_JSON):
+    return json.loads(Path(json_file).read_text()).get(fetched)
+
+
 @app.route('/')
 def index():
-    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
-    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    all_goals = fetch_data_from_json('goals')
+    all_tutors = fetch_data_from_json('teachers')
     random_tutors = sample(all_tutors, 6)
 
     return render_template(
@@ -44,8 +48,8 @@ def index():
 
 @app.route('/tutors/')
 def fetch_tutors():
-    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
-    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    all_goals = fetch_data_from_json('goals')
+    all_tutors = fetch_data_from_json('teachers')
     return render_template(
         'tutors.html',
         goals=all_goals,
@@ -55,8 +59,8 @@ def fetch_tutors():
 
 @app.route('/goals/<goal>/')
 def goals(goal):
-    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
-    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    all_goals = fetch_data_from_json('goals')
+    all_tutors = fetch_data_from_json('teachers')
     client_goal = all_goals.get(goal)
     if not client_goal:
         abort(NOT_FOUND_CODE, 'Goal not found')
@@ -67,9 +71,8 @@ def goals(goal):
 
 @app.route('/profiles/<int:tutor_id>/')
 def tutors(tutor_id):
-    tutors_data = json.loads(Path(TUTORS_JSON).read_text())
-    all_goals = tutors_data.get('goals')
-    all_tutors = tutors_data.get('teachers')
+    all_goals = fetch_data_from_json('goals')
+    all_tutors = fetch_data_from_json('teachers')
     try:
         tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
     except StopIteration:
@@ -86,7 +89,7 @@ def send_request():
 
 @app.route('/request_done/', methods=['POST'])
 def sended_request(output_json='request.json'):
-    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
+    all_goals = fetch_data_from_json('goals')
     client_goal = all_goals.get(request.form.get('goal'))
     client_time = request.form.get('time')
     client_name = request.form.get('client_name')
@@ -124,7 +127,7 @@ def book_tutor(tutor_id, day=None, time=None):
     }
     schedule_day = weekdays[request.args.get('day')]
     schedule_time = request.args.get('time')
-    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    all_tutors = fetch_data_from_json('teachers')
     try:
         tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
     except StopIteration:
