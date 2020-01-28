@@ -42,6 +42,17 @@ def index():
     )
 
 
+@app.route('/tutors/')
+def fetch_tutors():
+    all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
+    all_tutors = json.loads(Path(TUTORS_JSON).read_text()).get('teachers')
+    return render_template(
+        'tutors.html',
+        goals=all_goals,
+        tutors=all_tutors,
+    )
+
+
 @app.route('/goals/<goal>/')
 def goals(goal):
     all_goals = json.loads(Path(TUTORS_JSON).read_text()).get('goals')
