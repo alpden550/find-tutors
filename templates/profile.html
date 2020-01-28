@@ -17,8 +17,10 @@
         <div class="col-7">
           <h1 class="h2">{{ tutor.name }}</h1>
           <p>
-            {% for goal in goals %}
-              <span class="badge badge-secondary mr-2">{{ goal }} </span>
+            {% for goal, goal_name in goals %}
+              <a href={{ url_for('goals', goal=goal) }}>
+                <span class="badge badge-secondary mr-2">{{ goal_name.split(' ')[1:]|join(' ') }} </span>
+              </a>
             {% endfor %}
           </p>
           <p>Рейтинг: {{ tutor.rating }} Ставка: {{ tutor.price }} / час</p>

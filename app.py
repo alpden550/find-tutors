@@ -74,7 +74,7 @@ def tutors(tutor_id):
         tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
     except StopIteration:
         abort(NOT_FOUND_CODE, description='Resource not found')
-    tutor_goals = [all_goals[goal] for goal in tutor['goals']]
+    tutor_goals = [(goal, all_goals[goal]) for goal in tutor['goals']]
 
     return render_template('profile.html', tutor=tutor, goals=tutor_goals)
 
