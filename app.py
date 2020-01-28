@@ -1,12 +1,12 @@
 import json
 from pathlib import Path
 
-from flask import Flask, render_template
+from flask import Flask, render_template, abort
 
 app = Flask(__name__)
 
 TUTORS_JSON = 'tutors.json'
-
+NOT_FOUND_CODE = 404
 
 @app.route('/')
 def index():
@@ -23,7 +23,10 @@ def tutors(tutor_id):
     tutors_data = json.loads(Path(TUTORS_JSON).read_text())
     all_goals = tutors_data.get('goals')
     all_tutors = tutors_data.get('teachers')
-    tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
+    try:
+        tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
+    except StopIteration:
+        abort(NOT_FOUND_CODE, description="Resource not found")
     tutor_goals = [all_goals[goal] for goal in tutor['goals']]
 
     return render_template('profile.html', tutor=tutor, goals=tutor_goals)
