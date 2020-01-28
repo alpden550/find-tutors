@@ -35,7 +35,7 @@ def tutors(tutor_id):
 
 @app.route('/request/')
 def send_request():
-    return 'request'
+    return render_template('request.html')
 
 
 @app.route('/request_done/')
@@ -61,16 +61,34 @@ def book_tutor(tutor_id, day=None, time=None):
         tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
     except StopIteration:
         abort(NOT_FOUND_CODE, description='Resource not found')
-    return render_template('booking.html', tutor=tutor, day=schedule_day, time=schedule_time)
+    return render_template(
+        'booking.html', tutor=tutor, day=schedule_day, time=schedule_time
+    )
 
 
 @app.route('/booking_done/', methods=['POST'])
-def booking_done():
+def booking_done(output_file='booking.json'):
     client_name = request.form.get('client_name')
     client_phone = request.form.get('client_phone')
     client_day = request.form.get('client_day')
     client_time = request.form.get('client_time')
+    tutor_id = request.form.get('tutor_id')
 
+    Path(output_file).write_text(
+        json.dump(
+            {
+                'tutor_id': tutor_id,
+                'client_name': client_name,
+                'client_phone': client_phone,
+                'client_day': client_day,
+                'client_time': client_time,
+            },
+            ensure_ascii=False,
+            sort_keys=True,
+            indent=4,
+            separators=(',', ': '),
+        ),
+    )
     return render_template(
         'booking_done.html',
         name=client_name,
