@@ -11,7 +11,7 @@ class Goal(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
     tutors = db.relationship('Tutor', secondary=goals_tutors, back_populates='goals', lazy='joined')
-    requests = db.relationship('Request', back_populates='goal', lazy='joining')
+    requests = db.relationship('Request', back_populates='goal', lazy='joined')
 
     def __repr__(self):
         return '<Goal {name}>'.format(name=self.name)
@@ -25,7 +25,7 @@ class Tutor(db.Model):
     price = db.Column(db.Integer)
     rating = db.Column(db.Float)
     free = db.Column(db.Text)
-    golas = db.relationship('Goal', secondary=goals_tutors, back_populates='tutors', lazy='joined')
+    goals = db.relationship('Goal', secondary=goals_tutors, back_populates='tutors', lazy='joined')
     bookings = db.relationship('Booking', back_populates='tutor', lazy='joined')
 
     def __repr__(self):
@@ -35,6 +35,7 @@ class Tutor(db.Model):
 class Booking(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     tutor_id = db.Column(db.Integer, db.ForeignKey('tutor.uid'), nullable=False)
+    tutor = db.relationship('Tutor', back_populates='bookings')
     date = db.Column(db.String(10), nullable=False)
     time = db.Column(db.String(10), nullable=False)
 
@@ -47,7 +48,8 @@ class Request(db.Model):
     client_name = db.Column(db.String(20), nullable=False)
     client_phone = db.Column(db.Integer, nullable=False)
     client_time = db.Column(db.String(10), nullable=False)
-    client_goal = db.Column(db.Integer, db.ForeignKey('goal.uid'), nullable=False)
+    goal_id = db.Column(db.Integer, db.ForeignKey('goal.uid'), nullable=False)
+    goal = db.relationship('Goal', back_populates='requests')
 
     def __repr__(self):
         return '<Request {uid}>'.format(uid=self.uid)

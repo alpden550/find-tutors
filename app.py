@@ -9,10 +9,11 @@ from utilits import fetch_data_from_json, fetch_json, write_json
 
 NOT_FOUND_CODE = 404
 
-app = Flask(__name__)
 
+app = Flask(__name__)
 app.config.from_object(Config)
-db.init_app(app)
+with app.app_context():
+    db.init_app(app)
 
 
 @app.cli.command()
@@ -157,5 +158,4 @@ def booking_done(output_file='booking.json'):
 
 
 if __name__ == '__main__':
-    db.create_all()
     app.run()

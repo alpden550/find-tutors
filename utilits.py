@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
+import click
 
 import data as tutors
+import models
+from extensions import db
 
 TUTORS_JSON = 'tutors.json'
 
@@ -41,5 +44,18 @@ def write_tutors_to_json(output_file='tutors.json'):
     )
 
 
+def create_goals(goals):
+    for name in goals:
+        goal = models.Goal(name=name)
+        db.session.add(goal)
+        click.echo('Added goal {goal}'.format(goal=goal))
+    db.session.commit()
+
+
+def fill_db(input_json=TUTORS_JSON):
+    goals = fetch_data_from_json('goals')
+    create_goals(goals)
+
+
 if __name__ == '__main__':
-    write_tutors_to_json()
+    fill_db()
