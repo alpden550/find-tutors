@@ -10,6 +10,7 @@ goals_tutors = db.Table(
 class Goal(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
+    description = db.Column(db.String(200), nullable=False)
     tutors = db.relationship('Tutor', secondary=goals_tutors, back_populates='goals', lazy='joined')
     requests = db.relationship('Request', back_populates='goal', lazy='joined')
 
@@ -19,7 +20,7 @@ class Goal(db.Model):
 
 class Tutor(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(30), unique=True, nullable=False)
+    name = db.Column(db.String(30), nullable=False)
     photo = db.Column(db.String(64))
     about = db.Column(db.Text)
     price = db.Column(db.Integer)

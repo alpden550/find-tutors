@@ -5,15 +5,14 @@ from flask import Flask, abort, render_template, request
 
 from extensions import db
 from settings import BaseConfig as Config
-from utilits import fetch_data_from_json, fetch_json, write_json
+from utilits import fetch_data_from_json, fetch_json, fill_db, write_json
 
 NOT_FOUND_CODE = 404
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
-with app.app_context():
-    db.init_app(app)
+db.init_app(app)
 
 
 @app.cli.command()
@@ -21,6 +20,15 @@ def init():
     """Initialize database."""
     click.echo('Initializing the database...')
     db.create_all()
+
+
+@app.cli.command()
+def forge():
+    """Generate tutors from json."""
+    db.drop_all()
+    db.create_all()
+    click.echo('Initializing goals and tutors...')
+    fill_db()
 
 
 @app.route('/')

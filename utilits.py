@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
+
 import click
+from sqlalchemy.exc import IntegrityError
 
 import data as tutors
 import models
@@ -45,16 +47,45 @@ def write_tutors_to_json(output_file='tutors.json'):
 
 
 def create_goals(goals):
-    for name in goals:
-        goal = models.Goal(name=name)
+    for name, description in goals.items():
+        goal = models.Goal(name=name, description=description)
         db.session.add(goal)
-        click.echo('Added goal {goal}'.format(goal=goal))
-    db.session.commit()
+        try:  # noqa:WPS229
+            db.session.commit()
+            click.echo('Added goal {goal}'.format(goal=goal))
+        except IntegrityError:
+            db.session.rollback()
+
+
+def create_tutors(tutors):
+    for person in tutors:
+        shedule = json.dumps(person['free'])
+        tutor = models.Tutor(
+            name=person.get('name'),
+            photo=person.get('picture'),
+            about=person.get('about'),
+            price=person.get('price'),
+            rating=person.get('rating'),
+            free=shedule,
+        )
+        db.session.add(tutor)
+
+        for name in person['goals']:
+            goal = models.Goal.query.filter_by(name=name).first()
+            goal.tutors.append(tutor)
+            click.echo('Added goals {goals} for {tutor}'.format(goals=goal, tutor=tutor))
+        try:  # noqa:WPS229
+            db.session.commit()
+            click.echo('Added tutor {tutor}'.format(tutor=tutor))
+        except IntegrityError:
+            db.session.rollback()
 
 
 def fill_db(input_json=TUTORS_JSON):
     goals = fetch_data_from_json('goals')
+    tutors = fetch_data_from_json('teachers')
     create_goals(goals)
+    create_tutors(tutors)
 
 
 if __name__ == '__main__':
