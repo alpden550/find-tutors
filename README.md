@@ -20,13 +20,27 @@ If not, should use a virtual environment for the best project isolation. Activat
 pip install -r requirements.txt
 ```
 
-To enable debug mode, set it into .flaskenv:
+To enable debug mode, set it into .env:
 
 ```bash
-FLASK_ENV=development
+DEBUG=true
 ```
 
 ## How to run
+
+To create empty db run command:
+
+```bash
+flask init
+```
+
+To fill database run command:
+
+```bash
+flask forge
+```
+
+It will create goals and tutors from json.
 
 To start web server run it:
 
