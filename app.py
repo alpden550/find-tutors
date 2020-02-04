@@ -1,9 +1,9 @@
 from random import sample
 
+import click
 from flask import Flask, abort, render_template, request
-from flask_migrate import Migrate
-from flask_sqlalchemy import SQLAlchemy
 
+from extensions import db
 from settings import BaseConfig as Config
 from utilits import fetch_data_from_json, fetch_json, write_json
 
@@ -12,8 +12,14 @@ NOT_FOUND_CODE = 404
 app = Flask(__name__)
 
 app.config.from_object(Config)
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+db.init_app(app)
+
+
+@app.cli.command()
+def init():
+    """Initialize database."""
+    click.echo('Initializing the database...')
+    db.create_all()
 
 
 @app.route('/')
@@ -151,4 +157,5 @@ def booking_done(output_file='booking.json'):
 
 
 if __name__ == '__main__':
+    db.create_all()
     app.run()

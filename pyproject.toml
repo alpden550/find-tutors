@@ -11,6 +11,7 @@ gunicorn = "^20.0.4"
 Flask-SQLAlchemy = "^2.4.1"
 Flask-Migrate = "^2.5.2"
 python-dotenv = "^0.10.5"
+Flask-Script = "^2.0.6"
 
 [tool.poetry.dev-dependencies]
 wemake-python-styleguide = "^0.13.4"
