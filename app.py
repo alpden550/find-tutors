@@ -1,12 +1,19 @@
 from random import sample
 
 from flask import Flask, abort, render_template, request
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 
+from settings import BaseConfig as Config
 from utilits import fetch_data_from_json, fetch_json, write_json
+
+NOT_FOUND_CODE = 404
 
 app = Flask(__name__)
 
-NOT_FOUND_CODE = 404
+app.config.from_object(Config)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 
 @app.route('/')
