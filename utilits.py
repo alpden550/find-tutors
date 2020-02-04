@@ -4,7 +4,6 @@ from pathlib import Path
 import click
 from sqlalchemy.exc import IntegrityError
 
-import data as tutors
 import models
 from extensions import db
 
@@ -32,18 +31,6 @@ def write_json(json_data, output):
 
 def fetch_data_from_json(fetched, json_file=TUTORS_JSON):
     return json.loads(Path(json_file).read_text()).get(fetched)
-
-
-def write_tutors_to_json(output_file='tutors.json'):
-    Path(output_file).write_text(
-        json.dumps(
-            {'goals': tutors.goals, 'teachers': tutors.teachers},
-            ensure_ascii=False,
-            sort_keys=True,
-            indent=4,
-            separators=(',', ': '),
-        ),
-    )
 
 
 def create_goals(goals):
