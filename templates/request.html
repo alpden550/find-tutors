@@ -3,8 +3,16 @@
 
 {% block container %}
 <main class="container mt-5">
+
+  {% for field, errors in form.errors.items() %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        {{ form[field].label }}: {{ ', '.join(errors) }}
+    </div>
+  {% endfor %}
+
   <div class="col-12 col-sm-10 col-lg-6 offset-lg-3 offset-sm-1">
-    <form action={{ url_for("sended_request") }} class="card mb-5" method="post">
+    <form action={{ url_for("send_request") }} class="card mb-5" method="post">
       {{ form.hidden_tag() }}
       <div class="card-body text-center pt-5">
         <h1 class="h3 card-title mt-4 mb-2">Подбор преподавателя</h1>
@@ -15,21 +23,21 @@
         <div class="row">
           <div class="col">
             <p>Какая цель занятий?</p>
-              {% for goal in form.goals %}
-                <div class="form-check">
-                  {{ goal(class="form-check-input") }}
-                  {{ goal.label(class="form-check-label") }}
-                </div>
-              {% endfor %}
+            {% for goal in form.goals %}
+            <div class="form-check">
+              {{ goal(class="form-check-input") }}
+              {{ goal.label(class="form-check-label") }}
+            </div>
+            {% endfor %}
           </div>
           <div class="col">
             <p>Сколько времени есть?</p>
-              {% for time in form.times %}
-                <div class="form-check">
-                  {{ time(class="form-check-input") }}
-                  {{ time.label(class="form-check-label") }}
-                </div>
-              {% endfor %}
+            {% for time in form.times %}
+            <div class="form-check">
+              {{ time(class="form-check-input") }}
+              {{ time.label(class="form-check-label") }}
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
@@ -38,7 +46,7 @@
         {{ form.client_name.label(class="mb-1 mt-2") }}
         {{ form.client_name(class="form-control", placeholder="Ваше имя") }}
         {{ form.client_phone.label(class="mb-1 mt-2") }}
-        {{ form.client_phone(class="form-control", placeholder="9261234567", pattern="[0-9]{10}") }}
+        {{ form.client_phone(class="form-control", placeholder="9261234567") }}
         {{ form.submit(class="btn btn-primary mt-4 mb-2") }}
       </div>
     </form>

@@ -11,3 +11,5 @@ class BaseConfig(object):
         'DATABASE_URL', 'sqlite:///{db}'.format(db=os.path.join(basedir, 'data.sqlite')),
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    DEBUG_TB_INTERCEPT_REDIRECTS = False

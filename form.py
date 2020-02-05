@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import HiddenField, RadioField, StringField, SubmitField
 from wtforms.fields.html5 import TelField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Regexp
 
 
 class RequestForm(FlaskForm):
@@ -26,7 +26,15 @@ class RequestForm(FlaskForm):
         default='1-2',
     )
     client_name = StringField('Вас зовут', validators=[DataRequired()])
-    client_phone = TelField('Ваш телефон', validators=[DataRequired()])
+    client_phone = TelField(
+        'Ваш телефон',
+        validators=[
+            DataRequired(),
+            Regexp(
+                '[0-9]{10}', message='Введите 9 цифр вашего номера, формат: 9261234567',
+            ),
+        ],
+    )
     submit = SubmitField('Найдите мне преподавателя')
 
 

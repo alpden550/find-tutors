@@ -2,7 +2,7 @@ import json
 from random import sample
 
 import click
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 
 from extensions import csrf, db, migrate, toolbar
 from form import BookingForm, RequestForm
@@ -52,7 +52,9 @@ def fetch_tutors():
     for goal in all_goals:
         all_tutors.update(goal.tutors)
     return render_template(
-        'tutors.html', goals=all_goals, tutors=sorted(all_tutors, key=lambda tutor: tutor.uid),
+        'tutors.html',
+        goals=all_goals,
+        tutors=sorted(all_tutors, key=lambda tutor: tutor.uid),
     )
 
 
@@ -71,35 +73,47 @@ def tutors(tutor_id):
     )
 
 
-@app.route('/request/')
+@app.route('/request/', methods=['GET', 'POST'])
 def send_request():
     form = RequestForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        client_goal = request.form.get('goals')
+        client_time = request.form.get('times')
+        client_name = request.form.get('client_name')
+        clinet_phone = request.form.get('client_phone')
+        return redirect(
+            url_for(
+                'sended_request',
+                goal=client_goal,
+                time=client_time,
+                name=client_name,
+                phone=clinet_phone,
+            ),
+        )
+
     return render_template('request.html', form=form)
 
 
-@app.route('/request_done/', methods=['POST'])
-def sended_request():
-    client_goal = request.form.get('goals')
-    client_time = request.form.get('times')
-    client_name = request.form.get('client_name')
-    clinet_phone = request.form.get('client_phone')
-    goal = Goal.query.filter_by(name=client_goal).first_or_404()
+@app.route('/request_done/')
+def sended_request(**kwargs):
+    goal = request.args.get('goal')
+    time = request.args.get('time')
+    name = request.args.get('name')
+    phone = request.args.get('phone')
+    user_goal = Goal.query.filter_by(name=goal).first_or_404()
 
     user_request = Request(
-        client_name=client_name,
-        client_phone=clinet_phone,
-        client_time=client_time,
-        goal=goal,
+        client_name=name, client_phone=phone, client_time=time, goal=user_goal,
     )
     db.session.add(user_request)
     db.session.commit()
 
     return render_template(
         'request_done.html',
-        goal=goal.description,
-        time=client_time,
-        name=client_name,
-        phone=clinet_phone,
+        goal=user_goal.description,
+        time=time,
+        name=name,
+        phone=phone,
     )
 
 
@@ -122,9 +136,7 @@ def book_tutor(tutor_id, day=None, time=None):
     form.client_time.default = schedule_time
     form.tutor_id.default = tutor.uid
     form.process()
-    return render_template(
-        'booking.html', form=form, tutor=tutor,
-    )
+    return render_template('booking.html', form=form, tutor=tutor)
 
 
 @app.route('/booking_done/', methods=['POST'])
