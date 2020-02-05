@@ -3,7 +3,8 @@ from random import sample
 import click
 from flask import Flask, abort, render_template, request
 
-from extensions import db
+from extensions import db, toolbar
+from models import Goal, Tutor
 from settings import BaseConfig as Config
 from utilits import fetch_data_from_json, fetch_json, fill_db, write_json
 
@@ -13,6 +14,7 @@ NOT_FOUND_CODE = 404
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
+toolbar.init_app(app)
 
 
 @app.cli.command()
@@ -33,10 +35,9 @@ def forge():
 
 @app.route('/')
 def index():
-    all_goals = fetch_data_from_json('goals')
-    all_tutors = fetch_data_from_json('teachers')
+    all_goals = Goal.query.all()
+    all_tutors = Tutor.query.all()
     random_tutors = sample(all_tutors, 6)
-
     return render_template(
         'index.html',
         goals=all_goals,
