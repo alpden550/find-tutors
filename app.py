@@ -5,7 +5,7 @@ import click
 from flask import Flask, abort, render_template, request
 
 from extensions import db, toolbar
-from models import Goal, Tutor
+from models import Goal, Request, Tutor
 from settings import BaseConfig as Config
 from utilits import fetch_data_from_json, fetch_json, fill_db, write_json
 
@@ -78,23 +78,20 @@ def send_request():
 
 @app.route('/request_done/', methods=['POST'])
 def sended_request(output_json='request.json'):
-    all_goals = fetch_data_from_json('goals')
-    client_goal = all_goals.get(request.form.get('goal'))
+    client_goal = request.form.get('goal')
     client_time = request.form.get('time')
     client_name = request.form.get('client_name')
     clinet_phone = request.form.get('client_phone')
 
-    all_requests = []
-    all_requests.extend(fetch_json(json_file='request.json'))
-    all_requests.append(
-        {
-            'client_name': client_name,
-            'client_goal': client_goal,
-            'client_time': client_time,
-            'client_phone': clinet_phone,
-        },
+    goal = Goal.query.filter_by(name=client_goal).first_or_404()
+    user_request = Request(
+        client_name=client_name,
+        client_phone=clinet_phone,
+        client_time=client_time,
+        goal=goal,
     )
-    write_json(all_requests, output_json)
+    db.session.add(user_request)
+    db.session.commit()
 
     return render_template(
         'request_done.html',
