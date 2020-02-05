@@ -60,6 +60,7 @@ coverage.xml
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
+data.sqlite
 
 # Flask stuff:
 instance/
@@ -127,4 +128,3 @@ dmypy.json
 .vscode/
 booking.json
 request.json
-data.sqlite
