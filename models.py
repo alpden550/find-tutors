@@ -37,8 +37,10 @@ class Booking(db.Model):
     uid = db.Column(db.Integer, primary_key=True)
     tutor_id = db.Column(db.Integer, db.ForeignKey('tutor.uid'), nullable=False)
     tutor = db.relationship('Tutor', back_populates='bookings')
-    date = db.Column(db.String(10), nullable=False)
-    time = db.Column(db.String(10), nullable=False)
+    client_name = db.Column(db.String(20), nullable=False)
+    client_phone = db.Column(db.Integer, nullable=False)
+    client_date = db.Column(db.String(10), nullable=False)
+    client_time = db.Column(db.String(10), nullable=False)
 
     def __repr__(self):
         return '<Booking {uid}>'.format(uid=self.uid)

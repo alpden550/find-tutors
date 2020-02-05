@@ -26,7 +26,7 @@
             <input class="form-control" type="tel" id="clientPhone" placeholder="9261234567" name="client_phone" pattern="[0-9]{10}" required>
             <input class="form-control" type="text" id="clientDay" name="client_day" hidden value="{{ day }}">
             <input class="form-control" type="time" id="clientTime" name="client_time" hidden value="{{ time }}">
-            <input class="form-control" type="text" id="tutorId" name="tutor_id" hidden value="{{ tutor.id }}">
+            <input class="form-control" type="text" id="tutorId" name="tutor_id" hidden value="{{ tutor.uid }}">
             <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
         </div>
       </form>

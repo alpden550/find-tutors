@@ -2,15 +2,12 @@ import json
 from random import sample
 
 import click
-from flask import Flask, abort, render_template, request
+from flask import Flask, render_template, request
 
 from extensions import db, toolbar
-from models import Goal, Request, Tutor
+from models import Booking, Goal, Request, Tutor
 from settings import BaseConfig as Config
-from utilits import fetch_data_from_json, fetch_json, fill_db, write_json
-
-NOT_FOUND_CODE = 404
-
+from utilits import fill_db
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -130,18 +127,15 @@ def booking_done(output_file='booking.json'):
     client_time = request.form.get('client_time')
     tutor_id = request.form.get('tutor_id')
 
-    bookings = []
-    bookings.extend(fetch_json(json_file='booking.json'))
-    bookings.append(
-        {
-            'tutor_id': tutor_id,
-            'client_name': client_name,
-            'client_phone': client_phone,
-            'client_day': client_day,
-            'client_time': client_time,
-        },
+    booking = Booking(
+        tutor_id=tutor_id,
+        client_name=client_name,
+        client_phone=client_phone,
+        client_date=client_day,
+        client_time=client_time,
     )
-    write_json(bookings, output_file)
+    db.session.add(booking)
+    db.session.commit()
 
     return render_template(
         'booking_done.html',
