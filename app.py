@@ -115,11 +115,8 @@ def book_tutor(tutor_id, day=None, time=None):
     }
     schedule_day = weekdays[request.args.get('day')]
     schedule_time = request.args.get('time')
-    all_tutors = fetch_data_from_json('teachers')
-    try:
-        tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
-    except StopIteration:
-        abort(NOT_FOUND_CODE, description='Resource not found')
+    tutor = Tutor.query.get_or_404(tutor_id)
+
     return render_template(
         'booking.html', tutor=tutor, day=schedule_day, time=schedule_time,
     )

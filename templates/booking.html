@@ -8,8 +8,8 @@
     <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
       <form action="/booking_done/" method="post" class="card mb-3">
         <div class="card-body text-center pt-5">
-          {% if tutor.picture %}
-            <img src="{{ tutor.picture }}" class="mb-3" width="95" alt="">
+          {% if tutor.photo %}
+            <img src="{{ tutor.photo }}" class="mb-3" width="95" alt="">
           {% else %}
             <img src={{ url_for('static', filename='pict 1.png') }} class="mb-3" width="95" alt="">
           {% endif %}
