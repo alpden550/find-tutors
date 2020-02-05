@@ -41,11 +41,7 @@ def index():
         all_tutors.update(goal.tutors)
 
     random_tutors = sample(all_tutors, 6)
-    return render_template(
-        'index.html',
-        goals=all_goals,
-        tutors=random_tutors,
-    )
+    return render_template('index.html', goals=all_goals, tutors=random_tutors,)
 
 
 @app.route('/tutors/')
@@ -55,23 +51,13 @@ def fetch_tutors():
     for goal in all_goals:
         all_tutors.update(goal.tutors)
 
-    return render_template(
-        'tutors.html',
-        goals=all_goals,
-        tutors=all_tutors,
-    )
+    return render_template('tutors.html', goals=all_goals, tutors=all_tutors,)
 
 
 @app.route('/goals/<goal>/')
 def goals(goal):
-    all_goals = fetch_data_from_json('goals')
-    all_tutors = fetch_data_from_json('teachers')
-    client_goal = all_goals.get(goal)
-    if not client_goal:
-        abort(NOT_FOUND_CODE, 'Goal not found')
-
-    filtered_tutors = (tutor for tutor in all_tutors if goal in tutor['goals'])
-    return render_template('goal.html', goal=client_goal, tutors=filtered_tutors)
+    user_goal = Goal.query.join(Goal.tutors).filter(Goal.name == goal).first_or_404()
+    return render_template('goal.html', goal=user_goal, tutors=user_goal.tutors)
 
 
 @app.route('/profiles/<int:tutor_id>/')
@@ -102,12 +88,14 @@ def sended_request(output_json='request.json'):
 
     all_requests = []
     all_requests.extend(fetch_json(json_file='request.json'))
-    all_requests.append({
-        'client_name': client_name,
-        'client_goal': client_goal,
-        'client_time': client_time,
-        'client_phone': clinet_phone,
-    })
+    all_requests.append(
+        {
+            'client_name': client_name,
+            'client_goal': client_goal,
+            'client_time': client_time,
+            'client_phone': clinet_phone,
+        }
+    )
     write_json(all_requests, output_json)
 
     return render_template(

@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}{{ goal }} | TINYSTEPS{% endblock %}
+{% block title %}{{ goal.description }} | TINYSTEPS{% endblock %}
 
 
 {% block container %}
 <main class="container mt-3">
 
-  <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goal.split()[0] }}
-    <br/>Преподаватели<br> для {{ goal.split()[-1] }}</strong></h1>
+  <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goal.description.split()[0] }}
+    <br/>Преподаватели<br> для {{ goal.description.split()[-1] }}</strong></h1>
 
   <div class="row">
     <div class="col-12 col-lg-10 offset-lg-1 m-auto">
@@ -15,12 +15,12 @@
           <div class="card-body">
             <div class="row">
               <div class="col-3">
-                {% if tutor.picture %}
-                    <a href={{ url_for('tutors', tutor_id=tutor.id) }}>
-                      <img src="{{ tutor.picture }}" class="img-fluid" alt="">
+                {% if tutor.photo %}
+                    <a href={{ url_for('tutors', tutor_id=tutor.uid) }}>
+                      <img src="{{ tutor.photo }}" class="img-fluid" alt="">
                     </a>
                 {% else %}
-                    <a href={{ url_for('tutors', tutor_id=tutor.id) }}>
+                    <a href={{ url_for('tutors', tutor_id=tutor.uid) }}>
                       <img src={{ url_for('static', filename='pict 1.png') }} class="img-fluid" alt="">
                     </a>
                 {% endif %}
@@ -29,7 +29,7 @@
                 <p class="float-right">Рейтинг: {{ tutor.rating }} Ставка: {{ tutor.price }} / час</p>
                 <h2 class="h4">{{ tutor.name }}</h2>
                 <p>{{ tutor.about|truncate(300) }}</p>
-                <a href={{ url_for('tutors', tutor_id=tutor.id) }} class="btn btn-outline-primary btn-sm mr-3 mb-2">Показать информацию и
+                <a href={{ url_for('tutors', tutor_id=tutor.uid) }} class="btn btn-outline-primary btn-sm mr-3 mb-2">Показать информацию и
                   расписание</a>
               </div>
             </div>
