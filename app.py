@@ -1,3 +1,4 @@
+import json
 from random import sample
 
 import click
@@ -41,7 +42,7 @@ def index():
         all_tutors.update(goal.tutors)
 
     random_tutors = sample(all_tutors, 6)
-    return render_template('index.html', goals=all_goals, tutors=random_tutors,)
+    return render_template('index.html', goals=all_goals, tutors=random_tutors)
 
 
 @app.route('/tutors/')
@@ -51,7 +52,7 @@ def fetch_tutors():
     for goal in all_goals:
         all_tutors.update(goal.tutors)
 
-    return render_template('tutors.html', goals=all_goals, tutors=all_tutors,)
+    return render_template('tutors.html', goals=all_goals, tutors=all_tutors)
 
 
 @app.route('/goals/<goal>/')
@@ -62,15 +63,11 @@ def goals(goal):
 
 @app.route('/profiles/<int:tutor_id>/')
 def tutors(tutor_id):
-    all_goals = fetch_data_from_json('goals')
-    all_tutors = fetch_data_from_json('teachers')
-    try:
-        tutor = next(tutor for tutor in all_tutors if tutor['id'] == tutor_id)
-    except StopIteration:
-        abort(NOT_FOUND_CODE, description='Resource not found')
-    tutor_goals = [(goal, all_goals[goal]) for goal in tutor['goals']]
-
-    return render_template('profile.html', tutor=tutor, goals=tutor_goals)
+    tutor = Tutor.query.get_or_404(tutor_id)
+    tutor_schedule = json.loads(tutor.free)
+    return render_template(
+        'profile.html', tutor=tutor, goals=tutor.goals, schedule=tutor_schedule,
+    )
 
 
 @app.route('/request/')
@@ -94,7 +91,7 @@ def sended_request(output_json='request.json'):
             'client_goal': client_goal,
             'client_time': client_time,
             'client_phone': clinet_phone,
-        }
+        },
     )
     write_json(all_requests, output_json)
 

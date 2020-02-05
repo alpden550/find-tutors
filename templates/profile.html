@@ -8,8 +8,8 @@
     <div class="card-body m-2 m-md-4">
       <div class="row">
         <div class="col-5">
-          {% if tutor.picture %}
-            <img src="{{ tutor.picture }}" class="img-fluid" alt="">
+          {% if tutor.photo %}
+            <img src="{{ tutor.photo }}" class="img-fluid" alt="">
           {% else %}
             <img src={{ url_for('static', filename='pict 1.png') }} class="img-fluid" alt="">
           {% endif %}
@@ -17,9 +17,9 @@
         <div class="col-7">
           <h1 class="h2">{{ tutor.name }}</h1>
           <p>
-            {% for goal, goal_name in goals %}
-              <a href={{ url_for('goals', goal=goal) }}>
-                <span class="badge badge-secondary mr-2">{{ goal_name.split(' ')[1:]|join(' ') }} </span>
+            {% for goal in goals %}
+              <a href={{ url_for('goals', goal=goal.name) }}>
+                <span class="badge badge-secondary mr-2">{{ goal.description.split(' ')[1:]|join(' ') }} </span>
               </a>
             {% endfor %}
           </p>
@@ -48,7 +48,7 @@
         <tr>
           <td><span class="btn">{{ time }}</span></td>
           {% for day in ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun') %}
-            {% if tutor.free[day][time] %}
+            {% if schedule[day][time] %}
                 {% set button = 'btn-success' %}
                 {% set disabled = '' %}
             {% else %}
@@ -56,7 +56,7 @@
                 {% set disabled = 'disabled' %}
             {% endif %}
             
-            <td><a href={{ url_for("book_tutor", tutor_id=tutor.id, day=day, time=time) }} class="btn btn-sm btn-secondary {{ button }} {{ disabled }}">{{ tutor.free[day][time] }}</a></td>
+            <td><a href={{ url_for("book_tutor", tutor_id=tutor.uid, day=day, time=time) }} class="btn btn-sm btn-secondary {{ button }} {{ disabled }}">{{ schedule[day][time] }}</a></td>
             {% endfor %}
           {% endfor %}
         </tr>
