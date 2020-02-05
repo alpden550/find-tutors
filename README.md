@@ -20,10 +20,11 @@ If not, should use a virtual environment for the best project isolation. Activat
 pip install -r requirements.txt
 ```
 
-To enable debug mode, set it into .env:
+Set environment variables:
 
 ```bash
-DEBUG=true
+export DEBUG=true, if debug mode is need
+export SECRET_KEY=some extra secret key
 ```
 
 ## How to run
