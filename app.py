@@ -51,8 +51,9 @@ def fetch_tutors():
     all_tutors = set()
     for goal in all_goals:
         all_tutors.update(goal.tutors)
-
-    return render_template('tutors.html', goals=all_goals, tutors=all_tutors)
+    return render_template(
+        'tutors.html', goals=all_goals, tutors=sorted(all_tutors, key=lambda tutor: tutor.uid),
+    )
 
 
 @app.route('/goals/<goal>/')
