@@ -4,7 +4,7 @@ from random import sample
 import click
 from flask import Flask, render_template, request
 
-from extensions import csrf, db, toolbar
+from extensions import csrf, db, migrate, toolbar
 from form import BookingForm, RequestForm
 from models import Booking, Goal, Request, Tutor
 from settings import BaseConfig as Config
@@ -15,6 +15,7 @@ app.config.from_object(Config)
 db.init_app(app)
 toolbar.init_app(app)
 csrf.init_app(app)
+migrate.init_app(app, db)
 
 
 @app.cli.command()
