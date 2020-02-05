@@ -5,6 +5,7 @@ import click
 from flask import Flask, render_template, request
 
 from extensions import csrf, db, toolbar
+from form import RequestForm
 from models import Booking, Goal, Request, Tutor
 from settings import BaseConfig as Config
 from utilits import fill_db
@@ -71,17 +72,18 @@ def tutors(tutor_id):
 
 @app.route('/request/')
 def send_request():
-    return render_template('request.html')
+    form = RequestForm()
+    return render_template('request.html', form=form)
 
 
 @app.route('/request_done/', methods=['POST'])
-def sended_request(output_json='request.json'):
-    client_goal = request.form.get('goal')
-    client_time = request.form.get('time')
+def sended_request():
+    client_goal = request.form.get('goals')
+    client_time = request.form.get('times')
     client_name = request.form.get('client_name')
     clinet_phone = request.form.get('client_phone')
-
     goal = Goal.query.filter_by(name=client_goal).first_or_404()
+
     user_request = Request(
         client_name=client_name,
         client_phone=clinet_phone,
@@ -93,7 +95,7 @@ def sended_request(output_json='request.json'):
 
     return render_template(
         'request_done.html',
-        goal=client_goal,
+        goal=goal.description,
         time=client_time,
         name=client_name,
         phone=clinet_phone,
