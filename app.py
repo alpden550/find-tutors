@@ -35,8 +35,11 @@ def forge():
 
 @app.route('/')
 def index():
-    all_goals = Goal.query.all()
-    all_tutors = Tutor.query.all()
+    all_goals = Goal.query.join(Goal.tutors).all()
+    all_tutors = set()
+    for goal in all_goals:
+        all_tutors.update(goal.tutors)
+
     random_tutors = sample(all_tutors, 6)
     return render_template(
         'index.html',
@@ -47,8 +50,11 @@ def index():
 
 @app.route('/tutors/')
 def fetch_tutors():
-    all_goals = fetch_data_from_json('goals')
-    all_tutors = fetch_data_from_json('teachers')
+    all_goals = Goal.query.join(Goal.tutors).all()
+    all_tutors = set()
+    for goal in all_goals:
+        all_tutors.update(goal.tutors)
+
     return render_template(
         'tutors.html',
         goals=all_goals,
