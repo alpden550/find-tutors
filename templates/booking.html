@@ -6,7 +6,8 @@
 <main class="container mt-3">
   <div class="row mt-5">
     <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
-      <form action="/booking_done/" method="post" class="card mb-3">
+      <form action={{ url_for("booking_done") }} method="post" class="card mb-3">
+        {{ form.hidden_tag() }}
         <div class="card-body text-center pt-5">
           {% if tutor.photo %}
             <img src="{{ tutor.photo }}" class="mb-3" width="95" alt="">
@@ -16,18 +17,19 @@
 
           <h2 class="h5 card-title mt-2 mb-2">{{ tutor.name }}</h2>
           <p class="my-1">Запись на пробный урок</p>
-          <p class="my-1">{{ day }}, {{ time }}</p>
+          <p class="my-1">{{ form.client_day.default }}, {{ form.client_time.default }}</p>
         </div>
         <hr />
         <div class="card-body mx-3">
-            <label class="mb-1 mt-2" for="clientName">Вас зовут</label>
-            <input class="form-control" type="text" id="clientName" placeholder="Ваше имя" name="client_name" required>
-            <label class="mb-1 mt-2" for="clientPhone">Ваш телефон</label>
-            <input class="form-control" type="tel" id="clientPhone" placeholder="9261234567" name="client_phone" pattern="[0-9]{10}" required>
-            <input class="form-control" type="text" id="clientDay" name="client_day" hidden value="{{ day }}">
-            <input class="form-control" type="time" id="clientTime" name="client_time" hidden value="{{ time }}">
-            <input class="form-control" type="text" id="tutorId" name="tutor_id" hidden value="{{ tutor.uid }}">
-            <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
+            {{ form.client_name.label(class="mb-1 mt-2") }}
+            {{ form.client_name(class="form-control", placeholder="Ваше имя") }}
+            {{ form.client_phone.label(class="mb-1 mt-2") }}
+            {{ form.client_phone(class="form-control", placeholder="9261234567", pattern="[0-9]{10}") }}
+            {{ form.client_day }}
+            {{ form.client_time }}
+            {{ form.tutor_id }}
+
+            {{ form.submit(class="btn btn-primary btn-block mt-4") }}
         </div>
       </form>
     </div>

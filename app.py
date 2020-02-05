@@ -5,7 +5,7 @@ import click
 from flask import Flask, render_template, request
 
 from extensions import csrf, db, toolbar
-from form import RequestForm
+from form import BookingForm, RequestForm
 from models import Booking, Goal, Request, Tutor
 from settings import BaseConfig as Config
 from utilits import fill_db
@@ -116,14 +116,18 @@ def book_tutor(tutor_id, day=None, time=None):
     schedule_day = weekdays[request.args.get('day')]
     schedule_time = request.args.get('time')
     tutor = Tutor.query.get_or_404(tutor_id)
-
+    form = BookingForm()
+    form.client_day.default = schedule_day
+    form.client_time.default = schedule_time
+    form.tutor_id.default = tutor.uid
+    form.process()
     return render_template(
-        'booking.html', tutor=tutor, day=schedule_day, time=schedule_time,
+        'booking.html', form=form, tutor=tutor,
     )
 
 
 @app.route('/booking_done/', methods=['POST'])
-def booking_done(output_file='booking.json'):
+def booking_done():
     client_name = request.form.get('client_name')
     client_phone = request.form.get('client_phone')
     client_day = request.form.get('client_day')

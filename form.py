@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import RadioField, StringField, SubmitField
+from wtforms import HiddenField, RadioField, StringField, SubmitField
 from wtforms.fields.html5 import TelField
 from wtforms.validators import DataRequired
 
@@ -28,3 +28,12 @@ class RequestForm(FlaskForm):
     client_name = StringField('Вас зовут', validators=[DataRequired()])
     client_phone = TelField('Ваш телефон', validators=[DataRequired()])
     submit = SubmitField('Найдите мне преподавателя')
+
+
+class BookingForm(FlaskForm):
+    client_name = StringField('Вас зовут', validators=[DataRequired()])
+    client_phone = TelField('Ваш телефон', validators=[DataRequired()])
+    client_day = HiddenField('client_day')
+    client_time = HiddenField('client_time')
+    tutor_id = HiddenField('tutor_id')
+    submit = SubmitField('Записаться на пробный урок')
