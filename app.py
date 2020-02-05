@@ -2,6 +2,7 @@ import json
 from random import sample
 
 import click
+import phonenumbers
 from flask import Flask, redirect, render_template, request, url_for
 
 from extensions import csrf, db, migrate, toolbar
@@ -99,11 +100,17 @@ def sended_request(**kwargs):
     goal = request.args.get('goal')
     time = request.args.get('time')
     name = request.args.get('name')
-    phone = request.args.get('phone')
     user_goal = Goal.query.filter_by(name=goal).first_or_404()
+    phone = phonenumbers.parse(request.args.get('phone'), 'RU')
+    formatted_phone = phonenumbers.format_number(
+        phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
+    )
 
     user_request = Request(
-        client_name=name, client_phone=phone, client_time=time, goal=user_goal,
+        client_name=name,
+        client_phone=formatted_phone,
+        client_time=time,
+        goal=user_goal,
     )
     db.session.add(user_request)
     db.session.commit()
@@ -113,7 +120,7 @@ def sended_request(**kwargs):
         goal=user_goal.description,
         time=time,
         name=name,
-        phone=phone,
+        phone=formatted_phone,
     )
 
 

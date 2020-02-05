@@ -1,7 +1,17 @@
+import phonenumbers
 from flask_wtf import FlaskForm
 from wtforms import HiddenField, RadioField, StringField, SubmitField
 from wtforms.fields.html5 import TelField
-from wtforms.validators import DataRequired, Regexp
+from wtforms.validators import DataRequired, ValidationError
+
+
+def validate_phone(form, field):
+    try:  # noqa:WPS229
+        phone = phonenumbers.parse(field.data, 'RU')
+        if not phonenumbers.is_valid_number(phone):
+            raise ValueError()
+    except (phonenumbers.phonenumberutil.NumberParseException, ValueError):
+        raise ValidationError('Введите ваш номер, с 8 или без.')
 
 
 class RequestForm(FlaskForm):
@@ -26,15 +36,7 @@ class RequestForm(FlaskForm):
         default='1-2',
     )
     client_name = StringField('Вас зовут', validators=[DataRequired()])
-    client_phone = TelField(
-        'Ваш телефон',
-        validators=[
-            DataRequired(),
-            Regexp(
-                '[0-9]{10}', message='Введите 9 цифр вашего номера, формат: 9261234567',
-            ),
-        ],
-    )
+    client_phone = TelField('Ваш телефон', validators=[DataRequired(), validate_phone])
     submit = SubmitField('Найдите мне преподавателя')
 
 
