@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import click
+import phonenumbers
 from sqlalchemy.exc import IntegrityError
 
 import models
@@ -73,6 +74,13 @@ def fill_db(input_json=TUTORS_JSON):
     tutors = fetch_data_from_json('teachers')
     create_goals(goals)
     create_tutors(tutors)
+
+
+def format_phonenumber(phonenumber, code='RU'):
+    phone = phonenumbers.parse(phonenumber, 'RU')
+    return phonenumbers.format_number(
+        phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
+    )
 
 
 if __name__ == '__main__':

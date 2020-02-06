@@ -9,7 +9,7 @@ from extensions import csrf, db, migrate, toolbar
 from form import BookingForm, RequestForm
 from models import Booking, Goal, Request, Tutor
 from settings import BaseConfig as Config
-from utilits import fill_db
+from utilits import fill_db, format_phonenumber
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -101,10 +101,7 @@ def sended_request(**kwargs):
     time = request.args.get('time')
     name = request.args.get('name')
     user_goal = Goal.query.filter_by(name=goal).first_or_404()
-    phone = phonenumbers.parse(request.args.get('phone'), 'RU')
-    formatted_phone = phonenumbers.format_number(
-        phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
-    )
+    formatted_phone = format_phonenumber(request.args.get('phone'))
 
     user_request = Request(
         client_name=name,
@@ -165,10 +162,7 @@ def booking_done(**kwargs):
     client_day = request.args.get('client_date')
     client_time = request.args.get('client_time')
     tutor_id = request.args.get('tutor_id')
-    phone = phonenumbers.parse(request.args.get('client_phone'), 'RU')
-    formatted_phone = phonenumbers.format_number(
-        phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
-    )
+    formatted_phone = format_phonenumber(request.args.get('client_phone'))
 
     booking = Booking(
         tutor_id=tutor_id,
