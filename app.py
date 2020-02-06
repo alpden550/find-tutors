@@ -83,15 +83,14 @@ def send_request():
             'name': form.data.get('client_name'),
             'phone': form.data.get('client_phone'),
         }
-        return redirect(url_for('sended_request', context=context))
+        return redirect(url_for('sended_request', context=json.dumps(context)))
 
     return render_template('request.html', form=form)
 
 
 @app.route('/request_done/')
 def sended_request(**kwargs):
-    form_data = request.args.get('context')
-    context = json.loads(form_data.replace("'", "\""))  # noqa:Q000
+    context = json.loads(request.args.get('context'))
     goal = context.get('goal')
     time = context.get('time')
     name = context.get('name')
