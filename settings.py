@@ -4,7 +4,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class BaseConfig(object):
-    FLASK_DEBUG = os.getenv('DEBUG') in {'1', 'true'} or False
+    FLASK_DEBUG = os.getenv('DEBUG') in {'1', 'true', 'True', 'yes'}
     SECRET_KEY = os.getenv('SECRET_KEY', 'some extra secret string')
 
     SQLALCHEMY_DATABASE_URI = os.getenv(

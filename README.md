@@ -29,12 +29,6 @@ export SECRET_KEY=some extra secret key
 
 ## How to run
 
-To create empty db run command:
-
-```bash
-flask init
-```
-
 To fill database run command:
 
 ```bash
@@ -43,8 +37,14 @@ flask forge
 
 It will create goals and tutors from json.
 
-To start web server run it:
+And start web server:
 
 ```bash
 flask run
+```
+
+To create empty db run command:
+
+```bash
+flask init
 ```
