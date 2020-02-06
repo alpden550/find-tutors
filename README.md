@@ -23,7 +23,7 @@ pip install -r requirements.txt
 Set environment variables:
 
 ```bash
-export DEBUG=true, if debug mode is need
+export FLASK_DEBUG=true, if debug mode is need
 export SECRET_KEY=some extra secret key
 ```
 
