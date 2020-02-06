@@ -42,7 +42,7 @@ class RequestForm(FlaskForm):
 
 class BookingForm(FlaskForm):
     client_name = StringField('Вас зовут', validators=[DataRequired()])
-    client_phone = TelField('Ваш телефон', validators=[DataRequired()])
+    client_phone = TelField('Ваш телефон', validators=[DataRequired(), validate_phone])
     client_day = HiddenField('client_day')
     client_time = HiddenField('client_time')
     tutor_id = HiddenField('tutor_id')

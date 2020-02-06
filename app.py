@@ -124,7 +124,7 @@ def sended_request(**kwargs):
     )
 
 
-@app.route('/booking/<int:tutor_id>/')
+@app.route('/booking/<int:tutor_id>/', methods=['GET', 'POST'])
 def book_tutor(tutor_id, day=None, time=None):
     weekdays = {
         'mon': 'Понедельник',
@@ -135,29 +135,45 @@ def book_tutor(tutor_id, day=None, time=None):
         'sat': 'Суббота',
         'sun': 'Воскресенье',
     }
-    schedule_day = weekdays[request.args.get('day')]
+    client_day = request.args.get('day')
+    schedule_day = weekdays[client_day]
     schedule_time = request.args.get('time')
     tutor = Tutor.query.get_or_404(tutor_id)
     form = BookingForm()
-    form.client_day.default = schedule_day
-    form.client_time.default = schedule_time
-    form.tutor_id.default = tutor.uid
-    form.process()
-    return render_template('booking.html', form=form, tutor=tutor)
+
+    if request.method == 'POST' and form.validate_on_submit():
+        client_name = form.data.get('client_name')
+        client_phone = form.data.get('client_phone')
+        return redirect(
+            url_for(
+                'booking_done',
+                tutor_id=tutor_id,
+                client_name=client_name,
+                client_phone=client_phone,
+                client_date=schedule_day,
+                client_time=schedule_time,
+            ),
+        )
+    return render_template(
+        'booking.html', form=form, tutor=tutor, day=client_day, time=schedule_time,
+    )
 
 
-@app.route('/booking_done/', methods=['POST'])
-def booking_done():
-    client_name = request.form.get('client_name')
-    client_phone = request.form.get('client_phone')
-    client_day = request.form.get('client_day')
-    client_time = request.form.get('client_time')
-    tutor_id = request.form.get('tutor_id')
+@app.route('/booking_done/')
+def booking_done(**kwargs):
+    client_name = request.args.get('client_name')
+    client_day = request.args.get('client_date')
+    client_time = request.args.get('client_time')
+    tutor_id = request.args.get('tutor_id')
+    phone = phonenumbers.parse(request.args.get('client_phone'), 'RU')
+    formatted_phone = phonenumbers.format_number(
+        phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
+    )
 
     booking = Booking(
         tutor_id=tutor_id,
         client_name=client_name,
-        client_phone=client_phone,
+        client_phone=formatted_phone,
         client_date=client_day,
         client_time=client_time,
     )
@@ -167,7 +183,7 @@ def booking_done():
     return render_template(
         'booking_done.html',
         name=client_name,
-        phone=client_phone,
+        phone=formatted_phone,
         day=client_day,
         time=client_time,
     )
