@@ -130,30 +130,24 @@ def book_tutor(tutor_id, day=None, time=None):
     form = BookingForm()
 
     if request.method == 'POST' and form.validate_on_submit():
-        client_name = form.data.get('client_name')
-        client_phone = form.data.get('client_phone')
-        return redirect(
-            url_for(
-                'booking_done',
-                tutor_id=tutor_id,
-                client_name=client_name,
-                client_phone=client_phone,
-                client_date=schedule_day,
-                client_time=schedule_time,
-            ),
-        )
+        session['tutor_id'] = tutor_id
+        session['client_name'] = form.data.get('client_name')
+        session['client_phone'] = form.data.get('client_phone')
+        session['client_date'] = schedule_day
+        session['client_time'] = schedule_time
+        return redirect(url_for('booking_done'))
     return render_template(
         'booking.html', form=form, tutor=tutor, day=client_day, time=schedule_time,
     )
 
 
 @app.route('/booking_done/')
-def booking_done(**kwargs):
-    client_name = request.args.get('client_name')
-    client_day = request.args.get('client_date')
-    client_time = request.args.get('client_time')
-    tutor_id = request.args.get('tutor_id')
-    formatted_phone = format_phonenumber(request.args.get('client_phone'))
+def booking_done():
+    client_name = session.get('client_name')
+    client_day = session.get('client_date')
+    client_time = session.get('client_time')
+    tutor_id = session.get('tutor_id')
+    formatted_phone = format_phonenumber(session.get('client_phone'))
 
     booking = Booking(
         tutor_id=tutor_id,
