@@ -77,7 +77,7 @@ def fill_db(input_json=TUTORS_JSON):
 
 
 def format_phonenumber(phonenumber, code='RU'):
-    phone = phonenumbers.parse(phonenumber, 'RU')
+    phone = phonenumbers.parse(phonenumber, code)
     return phonenumbers.format_number(
         phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL,
     )

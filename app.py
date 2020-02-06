@@ -2,7 +2,7 @@ import json
 from random import sample
 
 import click
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, session, url_for
 
 from extensions import csrf, db, migrate, toolbar
 from form import BookingForm, RequestForm
@@ -77,25 +77,22 @@ def tutors(tutor_id):
 def send_request():
     form = RequestForm()
     if request.method == 'POST' and form.validate_on_submit():
-        context = {
-            'goal': form.data.get('goals'),
-            'time': form.data.get('times'),
-            'name': form.data.get('client_name'),
-            'phone': form.data.get('client_phone'),
-        }
-        return redirect(url_for('sended_request', context=json.dumps(context)))
+        session['goal'] = form.data.get('goals')
+        session['time'] = form.data.get('times')
+        session['name'] = form.data.get('client_name')
+        session['phone'] = form.data.get('client_phone')
+        return redirect(url_for('sended_request'))
 
     return render_template('request.html', form=form)
 
 
 @app.route('/request_done/')
-def sended_request(**kwargs):
-    context = json.loads(request.args.get('context'))
-    goal = context.get('goal')
-    time = context.get('time')
-    name = context.get('name')
+def sended_request():
+    goal = session.get('goal')
+    time = session.get('time')
+    name = session.get('name')
     user_goal = Goal.query.filter_by(name=goal).first_or_404()
-    formatted_phone = format_phonenumber(context.get('phone'))
+    formatted_phone = format_phonenumber(session.get('phone'))
 
     user_request = Request(
         client_name=name,
