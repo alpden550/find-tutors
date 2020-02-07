@@ -88,11 +88,13 @@ def send_request():
 
 @app.route('/request_done/')
 def sended_request():
-    goal = session.get('goal')
-    time = session.get('time')
-    name = session.get('name')
+    if session.get('goal') is None:
+        return redirect(url_for('send_request'))
+    goal = session.pop('goal')
+    time = session.pop('time')
+    name = session.pop('name')
     user_goal = Goal.query.filter_by(name=goal).first_or_404()
-    formatted_phone = format_phonenumber(session.get('phone'))
+    formatted_phone = format_phonenumber(session.pop('phone'))
 
     user_request = Request(
         client_name=name,
