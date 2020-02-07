@@ -145,11 +145,13 @@ def book_tutor(tutor_id, day=None, time=None):
 
 @app.route('/booking_done/')
 def booking_done():
-    client_name = session.get('client_name')
-    client_day = session.get('client_date')
-    client_time = session.get('client_time')
-    tutor_id = session.get('tutor_id')
-    formatted_phone = format_phonenumber(session.get('client_phone'))
+    if session.get('client_name') is None:
+        return redirect(url_for('fetch_tutors'))
+    client_name = session.pop('client_name')
+    client_day = session.pop('client_date')
+    client_time = session.pop('client_time')
+    tutor_id = session.pop('tutor_id')
+    formatted_phone = format_phonenumber(session.pop('client_phone'))
 
     booking = Booking(
         tutor_id=tutor_id,
