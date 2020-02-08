@@ -15,7 +15,7 @@ app.config.from_object(Config)
 db.init_app(app)
 toolbar.init_app(app)
 csrf.init_app(app)
-migrate.init_app(app, db)
+migrate.init_app(app, db, compare_type=True)
 
 
 @app.cli.command()
