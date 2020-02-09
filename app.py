@@ -77,10 +77,12 @@ def tutors(tutor_id):
 def send_request():
     form = RequestForm()
     if request.method == 'POST' and form.validate_on_submit():
-        session['goal'] = form.data.get('goals')
-        session['time'] = form.data.get('times')
-        session['name'] = form.data.get('client_name')
-        session['phone'] = form.data.get('client_phone')
+        session['user_request'] = {
+            'goal': form.data.get('goals'),
+            'time': form.data.get('times'),
+            'name': form.data.get('client_name'),
+            'phone': form.data.get('client_phone'),
+        }
         return redirect(url_for('sended_request'))
 
     return render_template('request.html', form=form)
@@ -88,28 +90,27 @@ def send_request():
 
 @app.route('/request_done/')
 def sended_request():
-    if session.get('goal') is None:
+    if session.get('user_request') is None:
         return redirect(url_for('send_request'))
-    goal = session.pop('goal')
-    time = session.pop('time')
-    name = session.pop('name')
-    user_goal = Goal.query.filter_by(name=goal).first_or_404()
-    formatted_phone = format_phonenumber(session.pop('phone'))
+    user_request = session.pop('user_request')
 
-    user_request = Request(
-        client_name=name,
+    user_goal = Goal.query.filter_by(name=user_request['goal']).first_or_404()
+    formatted_phone = format_phonenumber(user_request['phone'])
+
+    user = Request(
+        client_name=user_request['name'],
         client_phone=formatted_phone,
-        client_time=time,
+        client_time=user_request['time'],
         goal=user_goal,
     )
-    db.session.add(user_request)
+    db.session.add(user)
     db.session.commit()
 
     return render_template(
         'request_done.html',
         goal=user_goal.description,
-        time=time,
-        name=name,
+        time=user_request['time'],
+        name=user_request['name'],
         phone=formatted_phone,
     )
 
