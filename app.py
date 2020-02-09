@@ -140,11 +140,6 @@ def book_tutor(tutor_id, day=None, time=None):
             'client_date': schedule_day,
             'client_time': schedule_time,
         }
-        session['tutor_id'] = tutor_id
-        session['client_name'] = form.data.get('client_name')
-        session['client_phone'] = form.data.get('client_phone')
-        session['client_date'] = schedule_day
-        session['client_time'] = schedule_time
         return redirect(url_for('booking_done'))
     return render_template(
         'booking.html', form=form, tutor=tutor, day=client_day, time=schedule_time,
