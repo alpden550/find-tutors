@@ -133,6 +133,13 @@ def book_tutor(tutor_id, day=None, time=None):
     form = BookingForm()
 
     if request.method == 'POST' and form.validate_on_submit():
+        session['user_booking'] = {
+            'tutor_id': tutor_id,
+            'client_name': form.data.get('client_name'),
+            'client_phone': form.data.get('client_phone'),
+            'client_date': schedule_day,
+            'client_time': schedule_time,
+        }
         session['tutor_id'] = tutor_id
         session['client_name'] = form.data.get('client_name')
         session['client_phone'] = form.data.get('client_phone')
@@ -146,30 +153,27 @@ def book_tutor(tutor_id, day=None, time=None):
 
 @app.route('/booking_done/')
 def booking_done():
-    if session.get('client_name') is None:
+    if session.get('user_booking') is None:
         return redirect(url_for('fetch_tutors'))
-    client_name = session.pop('client_name')
-    client_day = session.pop('client_date')
-    client_time = session.pop('client_time')
-    tutor_id = session.pop('tutor_id')
-    formatted_phone = format_phonenumber(session.pop('client_phone'))
+    user_booking = session.pop('user_booking')
+    formatted_phone = format_phonenumber(user_booking['client_phone'])
 
     booking = Booking(
-        tutor_id=tutor_id,
-        client_name=client_name,
+        tutor_id=user_booking['tutor_id'],
+        client_name=user_booking['client_name'],
         client_phone=formatted_phone,
-        client_date=client_day,
-        client_time=client_time,
+        client_date=user_booking['client_date'],
+        client_time=user_booking['client_time'],
     )
     db.session.add(booking)
     db.session.commit()
 
     return render_template(
         'booking_done.html',
-        name=client_name,
+        name=user_booking['client_name'],
         phone=formatted_phone,
-        day=client_day,
-        time=client_time,
+        day=user_booking['client_date'],
+        time=user_booking['client_time'],
     )
 
 
